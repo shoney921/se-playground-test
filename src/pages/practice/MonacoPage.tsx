@@ -89,7 +89,6 @@ const MonacoPage: React.FC = () => {
     const [packageName, setPackageName] = useState('');
 
     useEffect(() => {
-        // Pyodide 스크립트를 동적으로 로드
         const loadPyodideScript = async () => {
             const script = document.createElement('script');
             script.src = "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js";
@@ -99,7 +98,6 @@ const MonacoPage: React.FC = () => {
                     const pyodideInstance = await window.loadPyodide({
                         indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/"
                     });
-                    // micropip 초기화
                     await pyodideInstance.loadPackage("micropip");
                     setPyodide(pyodideInstance);
                 } catch (error) {
@@ -107,18 +105,20 @@ const MonacoPage: React.FC = () => {
                     setOutput('Pyodide 로딩 실패');
                 }
             };
-            document.body.appendChild(script);
+            document.head.appendChild(script);
+
+            return () => {
+                if (script && script.parentNode) {
+                    script.parentNode.removeChild(script);
+                }
+                // Pyodide 인스턴스 정리
+                if (pyodide) {
+                    setPyodide(null);
+                }
+            };
         };
 
         loadPyodideScript();
-
-        // 클린업 함수
-        return () => {
-            const script = document.querySelector('script[src*="pyodide.js"]');
-            if (script) {
-                document.body.removeChild(script);
-            }
-        };
     }, []);
 
     const handleEditorChange = (value: string | undefined) => {

@@ -5,6 +5,7 @@ import CodeMirrorPage from "./CodeMirrorPage";
 import GitpodPage from './GitpodPage';
 import styled from "styled-components";
 import CodespacesPage from './CodespacesPage';
+import StackBlitzPage from './StackBlitzPage';
 
 const TabContainer = styled.div`
     display: flex;
@@ -26,7 +27,7 @@ const Tab = styled.button<{ active: boolean }>`
     }
 `;
 
-type EditorType = 'monaco' | 'monaco-sql' | 'codemirror' | 'gitpod' | 'codespaces';
+type EditorType = 'monaco' | 'monaco-sql' | 'codemirror' | 'gitpod' | 'codespaces' | 'stackblitz';
 
 const IDEPage: React.FC = () => {
     const [activeEditor, setActiveEditor] = useState<EditorType>('monaco');
@@ -64,6 +65,12 @@ const IDEPage: React.FC = () => {
                 >
                     GitHub Codespaces
                 </Tab>
+                <Tab
+                    active={activeEditor === 'stackblitz'}
+                    onClick={() => setActiveEditor('stackblitz')}
+                >
+                    StackBlitz
+                </Tab>
             </TabContainer>
 
             {activeEditor === 'monaco' && <MonacoPage />}
@@ -71,6 +78,7 @@ const IDEPage: React.FC = () => {
             {activeEditor === 'codemirror' && <CodeMirrorPage />}
             {activeEditor === 'gitpod' && <GitpodPage />}
             {activeEditor === 'codespaces' && <CodespacesPage />}
+            {activeEditor === 'stackblitz' && <StackBlitzPage />}
         </>
     );
 }

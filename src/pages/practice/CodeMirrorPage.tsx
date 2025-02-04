@@ -72,7 +72,6 @@ const CodeMirrorPage: React.FC = () => {
     const [pyodide, setPyodide] = useState<any>(null);
 
     useEffect(() => {
-        // Pyodide 스크립트 로드
         const loadPyodideScript = async () => {
             const script = document.createElement('script');
             script.src = "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js";
@@ -84,6 +83,16 @@ const CodeMirrorPage: React.FC = () => {
                 });
                 setPyodide(pyodideInstance);
                 setOutput("Python 환경 준비 완료!");
+            };
+
+            return () => {
+                if (script && script.parentNode) {
+                    script.parentNode.removeChild(script);
+                }
+                // Pyodide 인스턴스 정리
+                if (pyodide) {
+                    setPyodide(null);
+                }
             };
         };
 

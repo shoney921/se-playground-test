@@ -9,6 +9,7 @@
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.36.2",
     "@monaco-editor/react": "^4.6.0",
+    "@stackblitz/sdk": "^1.11.0",
     "@types/styled-components": "^5.1.34",
     "codemirror": "^6.0.1",
     "cra-template": "1.2.0",
