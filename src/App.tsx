@@ -1,7 +1,7 @@
 import { RouterProvider } from "react-router-dom";
 import root from "./router/root";
 
-function App() {
+function App(): JSX.Element {
   return <RouterProvider router={root} />;
 }
 

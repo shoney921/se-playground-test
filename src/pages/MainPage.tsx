@@ -7,10 +7,10 @@ const MainPage: React.FC = () => {
         <BasicLayout>
             <div className="main-container">
                 <div className="welcome-title">
-                    Welcome to My Website
+                    Welcome SE Playground
                 </div>
                 <div className="link-container">
-                    <Link to="/about">About 페이지로 이동</Link>
+                    <Link to="/practice/ide">실습 페이지로 이동</Link>
                 </div>
             </div>
         </BasicLayout>

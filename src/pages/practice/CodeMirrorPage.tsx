@@ -5,9 +5,10 @@ import styled from "styled-components";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 70vh;
+  height: 100vh;
   padding: 20px;
   width: 100%;
+  overflow-y: auto;
 `;
 
 const TabContainer = styled.div`
@@ -142,10 +143,6 @@ const CodeMirrorPage: React.FC = () => {
 
             <CodeMirrorEditor
                 language={activeTab}
-                initialValue="# Python 예제 코드
-print('Hello, World!')
-numbers = [1, 2, 3, 4, 5]
-print(f'Sum of numbers: {sum(numbers)}')"
                 onChange={handleCodeChange}
             />
 
