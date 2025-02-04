@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import MonacoPage from "./MonacoPage";
 import MonacoSQLPage from "./MonacoSQLPage";
 import CodeMirrorPage from "./CodeMirrorPage";
+import GitpodPage from './GitpodPage';
 import styled from "styled-components";
+import CodespacesPage from './CodespacesPage';
 
 const TabContainer = styled.div`
     display: flex;
@@ -24,7 +26,7 @@ const Tab = styled.button<{ active: boolean }>`
     }
 `;
 
-type EditorType = 'monaco' | 'monaco-sql' | 'codemirror';
+type EditorType = 'monaco' | 'monaco-sql' | 'codemirror' | 'gitpod' | 'codespaces';
 
 const IDEPage: React.FC = () => {
     const [activeEditor, setActiveEditor] = useState<EditorType>('monaco');
@@ -48,13 +50,27 @@ const IDEPage: React.FC = () => {
                     active={activeEditor === 'codemirror'}
                     onClick={() => setActiveEditor('codemirror')}
                 >
-                    CodeMirror (Copilot 지원)
+                    CodeMirror
+                </Tab>
+                <Tab
+                    active={activeEditor === 'gitpod'}
+                    onClick={() => setActiveEditor('gitpod')}
+                >
+                    Gitpod (Copilot 지원)
+                </Tab>
+                <Tab
+                    active={activeEditor === 'codespaces'}
+                    onClick={() => setActiveEditor('codespaces')}
+                >
+                    GitHub Codespaces
                 </Tab>
             </TabContainer>
 
             {activeEditor === 'monaco' && <MonacoPage />}
             {activeEditor === 'monaco-sql' && <MonacoSQLPage />}
             {activeEditor === 'codemirror' && <CodeMirrorPage />}
+            {activeEditor === 'gitpod' && <GitpodPage />}
+            {activeEditor === 'codespaces' && <CodespacesPage />}
         </>
     );
 }
