@@ -1,0 +1,39 @@
+#navbar {
+    display: flex;
+    background-color: rgb(147, 197, 253); /* bg-blue-300 */
+}
+
+.left-menu {
+    background-color: rgb(107, 114, 128); /* bg-gray-500 */
+    flex: 1;
+}
+
+.menu-list {
+    display: flex;
+    padding: 1rem; /* p-4 */
+    color: white;
+    font-weight: bold;
+}
+
+.menu-item {
+    padding-right: 1.5rem; /* pr-6 */
+    font-size: 1.5rem; /* text-2xl */
+}
+
+.right-menu {
+    display: flex;
+    justify-content: flex-end;
+    background-color: rgb(253, 186, 116); /* bg-orange-300 */
+    padding: 1rem; /* p-4 */
+    font-weight: 500; /* font-medium */
+    width: fit-content;
+    background-color: rgb(55, 65, 81); /* bg-gray-700 */
+    
+}
+
+.login-button {
+    color: white;
+    font-size: 0.875rem; /* text-sm */
+    margin: 0.25rem; /* m-1 */
+    border-radius: 0.25rem; /* rounded */
+} 
