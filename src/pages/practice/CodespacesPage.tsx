@@ -163,6 +163,12 @@ const CodespacesPage: React.FC = () => {
                     </MessageContainer>
                 )}
             </WorkspaceContainer>
+            <h1> 특징 요약 </h1>
+            <ul>
+                <li> - 프로젝트 생성에 토큰 문제가 있음... </li>
+                <li> - 깃허브에서 iframe 형식 막은것으로 보임</li>
+                <li> - 되기만 하면 깃헙코파일럿 되는데...</li>
+            </ul>
         </Container>
     );
 };

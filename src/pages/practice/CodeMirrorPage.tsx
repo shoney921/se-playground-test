@@ -168,6 +168,13 @@ const CodeMirrorPage: React.FC = () => {
                     <div key={index}>{line}</div>
                 ))}
             </ConsoleContainer>
+
+            <h1> 특징 요약 </h1>
+            <ul>
+                <li> - 콘솔출력 바로됨</li>
+                <li> - 터미널 제공 안함</li>
+                <li> - 개발서버 따로 필요함 (현재 화면은 Pyodide사용)</li>
+            </ul>
         </Container>
     );
 }

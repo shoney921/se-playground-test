@@ -55,10 +55,17 @@ const MessageContainer = styled.div`
   font-size: 16px;
 `;
 
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+`;
+
 const StackBlitzPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [embedded, setEmbedded] = useState(false);
+    const [vm, setVm] = useState<any>(null);
 
     const createProject = async () => {
         setIsLoading(true);
@@ -90,7 +97,7 @@ body {
 h1 {
     color: #333;
 }`,
-                    'script.js': `
+                    'index.js': `
 console.log('Hello from StackBlitz!');`
                 },
                 title: 'My Project',
@@ -108,12 +115,13 @@ console.log('Hello from StackBlitz!');`
                 throw new Error('StackBlitz 컨테이너를 찾을 수 없습니다.');
             }
 
-            const vm = await sdk.embedProject('stackblitz-container', project, {
+            const vmInstance = await sdk.embedProject('stackblitz-container', project, {
                 height: '100%',
                 hideNavigation: false,
                 hideExplorer: false
             });
 
+            setVm(vmInstance);
             setEmbedded(true);
         } catch (err: any) {
             setError(err.message);
@@ -123,14 +131,87 @@ console.log('Hello from StackBlitz!');`
         }
     };
 
+    const saveProject = async () => {
+        if (!vm) return;
+        
+        try {
+            const files = await vm.getFsSnapshot();
+            const projectData = JSON.stringify(files, null, 2);
+            
+            // 파일 다운로드 생성
+            const blob = new Blob([projectData], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'stackblitz-project.json';
+            a.style.display = 'none'; // 링크를 숨김
+            document.body.appendChild(a);
+            a.click();
+            
+            // 정리 작업을 setTimeout으로 지연
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+                if (a.parentNode) {  // 부모 노드가 있는 경우에만 제거
+                    a.parentNode.removeChild(a);
+                }
+            }, 100);
+        } catch (err: any) {
+            setError('프로젝트 저장 중 오류가 발생했습니다: ' + err.message);
+        }
+    };
+
+    const openTerminal = async () => {
+        if (!vm) return;
+        
+        try {
+            // package.json이 없는 경우에만 생성
+            const files = await vm.getFsSnapshot();
+            if (!files['package.json']) {
+                await vm.applyFsDiff({
+                    create: {
+                        'package.json': JSON.stringify({
+                            name: "stackblitz-project",
+                            version: "1.0.0",
+                            private: true,
+                            dependencies: {}
+                        }, null, 2)
+                    }
+                });
+            }
+            
+            // 터미널 열기
+            await vm.terminal.show();
+            await vm.terminal.focus();
+            
+        } catch (err: any) {
+            console.error('터미널 오류:', err);
+            setError('터미널 실행 중 오류가 발생했습니다: ' + err.message);
+        }
+    };
+
     return (
         <Container>
-            <Button
-                onClick={createProject}
-                disabled={isLoading || embedded}
-            >
-                {isLoading ? 'StackBlitz 프로젝트 생성 중...' : 'StackBlitz 프로젝트 생성'}
-            </Button>
+
+            <ButtonGroup>
+                <Button
+                    onClick={createProject}
+                    disabled={isLoading || embedded}
+                >
+                    {isLoading ? 'StackBlitz 프로젝트 생성 중...' : 'StackBlitz 프로젝트 생성'}
+                </Button>
+                <Button
+                    onClick={saveProject}
+                    disabled={!embedded || !vm}
+                >
+                    프로젝트 저장하기
+                </Button>
+                <Button
+                    onClick={openTerminal}
+                    disabled={!embedded || !vm}
+                >
+                    터미널 열기
+                </Button>
+            </ButtonGroup>
 
             <WorkspaceContainer>
                 {error ? (
@@ -150,6 +231,13 @@ console.log('Hello from StackBlitz!');`
                     )
                 )}
             </WorkspaceContainer>
+
+            <h1> 특징 요약 </h1>
+            <ul>
+                <li> - 코드 편집 및 실행 화면 바로 보임</li>
+                <li> - VM 제공, 터미널 지원 한 것으로 보임</li>
+                <li> - 프로젝트 저장 및 공유 기능 있음, 위에 구현한 방식 말고 있음...</li>
+            </ul>
         </Container>
     );
 };

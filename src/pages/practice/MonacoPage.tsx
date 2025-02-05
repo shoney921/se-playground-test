@@ -12,38 +12,39 @@ declare global {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 70vh;
-  padding: 20px;
+  height: 100vh;
+  overflow: hidden;
   width: 100%;
 `;
 
 const EditorContainer = styled.div`
   flex: 1;
-  margin-bottom: 10px;
-  width: 100%;
-  height: 50px;
+  min-height: 0;  // flex-shrink가 제대로 작동하게 함
+  overflow: hidden;
+`;
 
-  .monaco-editor {
-    .view-line {
-      font-size: 15px !important;
-      line-height: 1.5 !important;
-    }
-    .line-numbers {
-      font-size: 15px !important;
-    }
-  }
+const OutputContainer = styled.div`
+  height: 300px;  // 터미널과 콘솔의 전체 높이
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+  overflow: hidden;
 `;
 
 const ConsoleContainer = styled.div`
-  height: 200px;
-  background-color: #1e1e1e;
-  color: white;
+  flex: 1;
   padding: 10px;
-  font-family: monospace;
-  font-size: 15px;
+  color: white;
+  font-family: 'Consolas', monospace;
+  font-size: 14px;
   overflow-y: auto;
-  border-radius: 4px;
-  width: 100%;
+  background-color: #2d2d2d;
+`;
+
+const TerminalContainer = styled(ConsoleContainer)`
+  flex: 1;
+  background-color: #000;
+  border-top: 1px solid #333;
 `;
 
 const RunButton = styled.button`
@@ -82,11 +83,33 @@ const InstallButton = styled(RunButton)`
   }
 `;
 
+const TerminalPrompt = styled.span`
+  color: #4CAF50;
+  margin-right: 8px;
+  font-weight: bold;
+`;
+
+const TerminalInput = styled.input`
+  background: transparent;
+  border: none;
+  color: white;
+  font-family: 'Consolas', monospace;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  
+  &::placeholder {
+    color: #666;
+  }
+`;
+
 const MonacoPage: React.FC = () => {
     const [code, setCode] = useState('print("Hello, World!")');
     const [output, setOutput] = useState('');
     const [pyodide, setPyodide] = useState<any>(null);
     const [packageName, setPackageName] = useState('');
+    const [terminalInput, setTerminalInput] = useState('');
+    const [terminalHistory, setTerminalHistory] = useState<string[]>([]);
 
     useEffect(() => {
         const loadPyodideScript = async () => {
@@ -207,6 +230,13 @@ const MonacoPage: React.FC = () => {
         });
     };
 
+    const executeTerminalCommand = (command: string) => {
+        // 터미널 명령어 실행 로직을 구현해야 합니다.
+        console.log(`Executing terminal command: ${command}`);
+        setTerminalHistory([...terminalHistory, command]);
+        setTerminalInput('');
+    };
+
     return (
         <Container>
             <PackageContainer>
@@ -216,9 +246,10 @@ const MonacoPage: React.FC = () => {
                     onChange={(e) => setPackageName(e.target.value)}
                     placeholder="설치할 패키지 이름 입력 (예: numpy)"
                     style={{ fontSize: '15px' }}
-                />
+                    />
                 <InstallButton onClick={installPackage}>패키지 설치</InstallButton>
             </PackageContainer>
+            <RunButton onClick={runCode}>실행</RunButton>
             <EditorContainer>
                 <Editor
                     height="100%"
@@ -240,12 +271,38 @@ const MonacoPage: React.FC = () => {
                     }}
                 />
             </EditorContainer>
-            <RunButton onClick={runCode}>실행</RunButton>
-            <ConsoleContainer>
-                {output.split('\n').map((line, index) => (
-                    <div key={index}>{line}</div>
-                ))}
-            </ConsoleContainer>
+            <OutputContainer>
+                <ConsoleContainer>
+                    {output.split('\n').map((line, index) => (
+                        <div key={index}>{line}</div>
+                    ))}
+                </ConsoleContainer>
+                <TerminalContainer>
+                    {terminalHistory.map((line, index) => (
+                        <div key={index}>{line}</div>
+                    ))}
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <TerminalPrompt>{'>>>'}</TerminalPrompt>
+                        <TerminalInput
+                            value={terminalInput}
+                            onChange={(e) => setTerminalInput(e.target.value)}
+                            onKeyPress={(e) => {
+                                if (e.key === 'Enter' && terminalInput.trim()) {
+                                    executeTerminalCommand(terminalInput);
+                                }
+                            }}
+                            placeholder="Python 명령어를 입력하세요..."
+                        />
+                    </div>
+                </TerminalContainer>
+            </OutputContainer>
+
+            <h1> 특징 요약 </h1>
+            <ul>
+                <li> - 콘솔출력 바로됨</li>
+                <li> - 개발서버 따로 필요함 (현재 화면은 Pyodide사용)</li>
+                <li> - 패키지 설치 가능</li>
+            </ul>
         </Container>
     );
 };
