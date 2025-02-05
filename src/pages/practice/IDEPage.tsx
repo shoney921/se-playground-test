@@ -42,12 +42,6 @@ const IDEPage: React.FC = () => {
                     Monaco Python
                 </Tab>
                 <Tab
-                    active={activeEditor === 'monaco-sql'}
-                    onClick={() => setActiveEditor('monaco-sql')}
-                >
-                    Monaco SQL
-                </Tab>
-                <Tab
                     active={activeEditor === 'codemirror'}
                     onClick={() => setActiveEditor('codemirror')}
                 >
@@ -74,7 +68,6 @@ const IDEPage: React.FC = () => {
             </TabContainer>
 
             {activeEditor === 'monaco' && <MonacoPage />}
-            {activeEditor === 'monaco-sql' && <MonacoSQLPage />}
             {activeEditor === 'codemirror' && <CodeMirrorPage />}
             {activeEditor === 'gitpod' && <GitpodPage />}
             {activeEditor === 'codespaces' && <CodespacesPage />}
